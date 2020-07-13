@@ -1,0 +1,16 @@
+{
+	"folders": [
+		{
+			"path": "."
+		},
+		{
+			"name": "bookstore_oauth-api",
+			"path": "..\\bookstore_oauth-api"
+		},
+		{
+			"name": "bookstore_items-api",
+			"path": "..\\bookstore_items-api"
+		}
+	],
+	"settings": {}
+}
