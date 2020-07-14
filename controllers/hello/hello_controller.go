@@ -1,4 +1,4 @@
-package controllers
+package hello
 
 import (
 	"net/http"
