@@ -9,5 +9,16 @@ import (
 )
 
 func CreateUser(user users.User) (*users.User, *errors.RestErr) {
+	err := user.Validate()
+	if err != nil {
+		return nil, err
+	}
+
+	//Clean user at this point; so save to database possible
+
+	saveErr := user.Save()
+	if saveErr != nil {
+		return nil, saveErr
+	}
 	return &user, nil
 }
