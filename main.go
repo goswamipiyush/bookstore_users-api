@@ -1,3 +1,5 @@
+//This is the main package (entry point) for the bookstore application. This will have the main function.
+
 package main
 
 import (
