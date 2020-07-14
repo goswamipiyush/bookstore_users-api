@@ -3,20 +3,16 @@
 package app
 
 import (
-	"net/http"
-
 	"github.com/gin-gonic/gin"
+)
+
+var (
+	router = gin.Default()
 )
 
 func StartApplication() {
 
-	//	mapUrls()
-	router := gin.Default()
-
-	router.GET("/user/:name", func(c *gin.Context) {
-		name := c.Param("name")
-		c.String(http.StatusOK, "Hello %s", name)
-	})
+	mapUrls()
 
 	router.Run(":8080")
 }

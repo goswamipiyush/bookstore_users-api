@@ -2,6 +2,13 @@
 
 package app
 
+import (
+	"github.com/goswamipiyush/bookstore_users-api/controllers"
+)
+
 func mapUrls() {
-	
+
+	router.GET("/ping", controllers.Ping)
+	router.GET("/user/:name", controllers.Hello)
+
 }
