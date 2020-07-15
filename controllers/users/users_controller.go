@@ -16,6 +16,8 @@ import (
 func CreateUser(c *gin.Context) {
 	var user users.User
 	fmt.Println(user)
+
+	//One way of populating JSON structure from reqeust body
 	//bytes, err := ioutil.ReadAll(c.Request.Body)
 	// if err != nil {
 	// 	//TODO - handle the error
@@ -23,6 +25,7 @@ func CreateUser(c *gin.Context) {
 	// }
 	//err = json.Unmarshal(bytes, &user)
 
+	//Second way of populating JSON structure from reauest body
 	err := c.ShouldBindJSON(&user)
 
 	if err != nil {
