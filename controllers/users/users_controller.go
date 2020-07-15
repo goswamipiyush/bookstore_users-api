@@ -5,6 +5,7 @@ package users
 import (
 	"fmt"
 	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 	"github.com/goswamipiyush/bookstore_users-api/domain/users"
@@ -39,7 +40,24 @@ func CreateUser(c *gin.Context) {
 }
 
 func GetUser(c *gin.Context) {
-	c.String(http.StatusNotImplemented, "Please implement me!")
+	var user users.User
+
+	key := c.Params[0].Key
+	fmt.Println(key)
+	val := c.Params[0].Value
+	fmt.Println(val)
+
+	i, err := strconv.ParseInt(val, 10, 64)
+	if err != nil {
+		//TODO - handle get error
+		return
+	}
+	result, getErr := services.GetUser(i, user)
+	if getErr != nil {
+		c.JSON(getErr.Status, getErr)
+		return
+	}
+	c.JSON(http.StatusOK, result)
 }
 
 func SearchUser(c *gin.Context) {

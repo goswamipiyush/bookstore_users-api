@@ -4,6 +4,8 @@
 package services
 
 import (
+	"fmt"
+
 	"github.com/goswamipiyush/bookstore_users-api/domain/users"
 	"github.com/goswamipiyush/bookstore_users-api/utils/errors"
 )
@@ -14,11 +16,20 @@ func CreateUser(user users.User) (*users.User, *errors.RestErr) {
 		return nil, err
 	}
 
-	//Clean user at this point; so save to database possible
-
+	//We have a clean "savable" user at this point; so save to database possible
 	saveErr := user.Save()
 	if saveErr != nil {
 		return nil, saveErr
 	}
 	return &user, nil
+}
+
+func GetUser(id int64, user users.User) (*users.User, *errors.RestErr) {
+	result, err := user.Get(id)
+	if err != nil {
+		return nil, err
+	}
+	fmt.Println(result.Id)
+
+	return result, nil
 }
