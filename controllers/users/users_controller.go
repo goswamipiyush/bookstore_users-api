@@ -32,7 +32,6 @@ func CreateUser(c *gin.Context) {
 	}
 	result, saveErr := services.CreateUser(user)
 	if saveErr != nil {
-		//TODO - handle database save failure error
 		c.JSON(saveErr.Status, saveErr)
 		return
 	}

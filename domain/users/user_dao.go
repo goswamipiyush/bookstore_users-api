@@ -3,6 +3,7 @@ package users
 
 import (
 	"fmt"
+	"time"
 
 	"github.com/goswamipiyush/bookstore_users-api/utils/errors"
 )
@@ -16,6 +17,10 @@ func (user *User) Save() *errors.RestErr {
 	if usersDB[user.Id] != nil {
 		return errors.NewBadRequestError("User already exists")
 	}
+	//Format the date before saving to the database
+	timeNow := time.Now().Format("2006.01.02 15:04:05")
+	user.DateCreated = timeNow
+
 	usersDB[user.Id] = user
 	return nil
 }

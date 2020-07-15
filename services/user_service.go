@@ -4,8 +4,6 @@
 package services
 
 import (
-	"fmt"
-
 	"github.com/goswamipiyush/bookstore_users-api/domain/users"
 	"github.com/goswamipiyush/bookstore_users-api/utils/errors"
 )
@@ -29,7 +27,6 @@ func GetUser(id int64, user users.User) (*users.User, *errors.RestErr) {
 	if err != nil {
 		return nil, err
 	}
-	fmt.Println(result.Id)
-
+	//Seems we have got a 'good' user back, return it
 	return result, nil
 }
