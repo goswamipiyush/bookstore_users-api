@@ -25,27 +25,4 @@ func init() {
 	}
 	//defer SqlDB.Close()
 	log.Println("Database connection successful")
-	//We have a valid database here to connect to
-
-	// insert, err := sqldb.Query("INSERT INTO test VALUES ( 2, 'TEST' )")
-
-	// // if there is an error inserting, handle it
-	// if err != nil {
-	// 	panic(err.Error())
-	// }
-	// be careful deferring Queries if you are using transactions
-
-	//defer insert.Close()
-}
-
-func Insert() {
-	insert, err := SqlDB.Query("INSERT INTO test VALUES ( 2, 'TEST' )")
-
-	// if there is an error inserting, handle it
-	if err != nil {
-		panic(err.Error())
-	}
-	//be careful deferring Queries if you are using transactions
-
-	defer insert.Close()
 }

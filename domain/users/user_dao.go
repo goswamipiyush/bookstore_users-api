@@ -46,12 +46,6 @@ func (user *User) Save() *errors.RestErr {
 }
 
 func (user *User) Get(id int64) (*User, *errors.RestErr) {
-	//Check for DB heartbeat
-	// err := users_db.sqldb.Ping()
-	// if err != nil {
-	// 	panic(err)
-	// }
-
 	result := usersDB[id]
 	if result == nil {
 		return nil, errors.NewNotFoundError(fmt.Sprintf("User id %d not found", id))
