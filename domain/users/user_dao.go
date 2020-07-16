@@ -3,6 +3,7 @@ package users
 
 import (
 	"fmt"
+	"strconv"
 
 	database "github.com/goswamipiyush/bookstore_users-api/datasources/mysql/users_db"
 	utils "github.com/goswamipiyush/bookstore_users-api/utils/datetime"
@@ -13,9 +14,9 @@ const (
 	queryInsertUser = "INSERT INTO users(first_name, last_name, email, date_created) VALUES(?,?,?,?);"
 )
 
-var (
-	usersDB = make(map[int64]*User) //temporary database till we actually have a DB to persist data
-)
+// var (
+// 	usersDB = make(map[int64]*User) //temporary database till we actually have a DB to persist data
+// )
 
 func (user *User) Save() *errors.RestErr {
 	insertStmt, err := database.SqlDB.Prepare(queryInsertUser)
@@ -37,24 +38,32 @@ func (user *User) Save() *errors.RestErr {
 	}
 	user.Id = userId
 
-	if usersDB[user.Id] != nil {
-		return errors.NewBadRequestError("User already exists")
-	}
+	//if usersDB[user.Id] != nil {
+	//	return errors.NewBadRequestError("User already exists")
+	//}
 
-	usersDB[user.Id] = user
+	//usersDB[user.Id] = user
 	return nil
 }
 
 func (user *User) Get(id int64) (*User, *errors.RestErr) {
-	result := usersDB[id]
-	if result == nil {
-		return nil, errors.NewNotFoundError(fmt.Sprintf("User id %d not found", id))
+
+	queryGetUser := "SELECT id, first_name, last_name, email, date_created FROM users where id = ?"
+	stringId := strconv.FormatInt(id, 10)
+	rows, err := database.SqlDB.Query(queryGetUser, stringId)
+	if err != nil {
+		return nil, errors.NewInternalServerError("Could not fetch the record")
 	}
-	user.Id = result.Id
-	user.FirstName = result.FirstName
-	user.LastName = result.LastName
-	user.Email = result.Email
-	user.DateCreated = result.DateCreated
+	for rows.Next() {
+		err := rows.Scan(&user.Id, &user.FirstName, &user.LastName, &user.Email, &user.DateCreated)
+		if err != nil {
+			return nil, errors.NewInternalServerError("Could not fetch the record(s)")
+		}
+	}
+	//At this point, if no rows were returned, just return an error
+	if user.Id == 0 {
+		return nil, errors.NewNotFoundError(fmt.Sprintf("User with id %d does not exist", id))
+	}
 	return user, nil
 
 }

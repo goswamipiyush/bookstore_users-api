@@ -12,10 +12,6 @@ var (
 	SqlDB *sql.DB
 )
 
-func GetConn() *sql.DB {
-	return SqlDB
-}
-
 func init() {
 	dataSourceName := fmt.Sprintf("%s:%s@tcp(127.0.0.1:3306)/%s", "root", "goswamip1yush", "users_db")
 	var OpenErr error
