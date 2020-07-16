@@ -14,10 +14,6 @@ const (
 	queryInsertUser = "INSERT INTO users(first_name, last_name, email, date_created) VALUES(?,?,?,?);"
 )
 
-// var (
-// 	usersDB = make(map[int64]*User) //temporary database till we actually have a DB to persist data
-// )
-
 func (user *User) Save() *errors.RestErr {
 	insertStmt, err := database.SqlDB.Prepare(queryInsertUser)
 	if err != nil {
@@ -37,12 +33,6 @@ func (user *User) Save() *errors.RestErr {
 		return errors.NewInternalServerError("Error while trying to insert id")
 	}
 	user.Id = userId
-
-	//if usersDB[user.Id] != nil {
-	//	return errors.NewBadRequestError("User already exists")
-	//}
-
-	//usersDB[user.Id] = user
 	return nil
 }
 
