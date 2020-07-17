@@ -12,8 +12,9 @@ import (
 )
 
 const (
-	queryInsertUser = "INSERT INTO users(first_name, last_name, email, date_created) VALUES(?,?,?,?);"
-	queryDeleteUser = "DELETE FROM users WHERE id =?;"
+	queryInsertUser       = "INSERT INTO users(first_name, last_name, email, date_created) VALUES(?,?,?,?);"
+	queryDeleteUser       = "DELETE FROM users WHERE id =?;"
+	queryFindUserByStatus = "SELECT id, first_name, last_name, email, date_created, status FROM USERS where status = ?;"
 )
 
 func (user *User) Save() *errors.RestErr {
@@ -71,4 +72,36 @@ func (user *User) Delete(id int64) (*sql.Result, *errors.RestErr) {
 		return nil, errors.NewInternalServerError("Could not delete the record")
 	}
 	return &deleteResult, nil
+}
+
+func (user *User) Search(status string) ([]User, *errors.RestErr) {
+
+	findStmt, err := database.SqlDB.Prepare(queryFindUserByStatus)
+	if err != nil {
+		return nil, errors.NewInternalServerError("Could not prepare the query for a find")
+	}
+	defer findStmt.Close()
+
+	rows, err := findStmt.Query(status)
+	if err != nil {
+		return nil, errors.NewInternalServerError("Could not query the database for the find by status")
+	}
+	defer rows.Close()
+	if err != nil {
+		return nil, errors.NewInternalServerError("Could not close rows")
+	}
+
+	results := make([]User, 0)
+	for rows.Next() {
+		var user User
+		err := rows.Scan(&user.Id, &user.FirstName, &user.LastName, &user.Email, &user.DateCreated, &user.Status)
+		if err != nil {
+			return nil, errors.NewInternalServerError("Could not fetch the record(s)")
+		}
+		results = append(results, user)
+	}
+	if len(results) == 0 {
+		return nil, errors.NewNotFoundError(fmt.Sprintf("User with status '%s' does not exist", status))
+	}
+	return results, nil
 }

@@ -76,6 +76,16 @@ func DeleteUser(c *gin.Context) {
 	c.JSON(http.StatusOK, result)
 }
 
+func Search(c *gin.Context) {
+	status := c.Query("status")
+	users, getErr := services.Search(status)
+	if getErr != nil {
+		c.JSON(getErr.Status, getErr)
+		return
+	}
+	c.JSON(http.StatusOK, users)
+}
+
 func SearchUser(c *gin.Context) {
 	c.String(http.StatusNotImplemented, "Please implement me!")
 }

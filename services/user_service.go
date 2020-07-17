@@ -41,3 +41,13 @@ func DeleteUser(id int64, user users.User) (*sql.Result, *errors.RestErr) {
 	//Seems like the user is deleted now
 	return result, nil
 }
+
+func Search(status string) ([]users.User, *errors.RestErr) {
+	dao := &users.User{}
+	users, err := dao.Search(status)
+	if err != nil {
+		return nil, err
+	}
+	//Seems we have got a 'good' user back, return it
+	return users, nil
+}
