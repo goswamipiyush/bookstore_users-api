@@ -12,7 +12,7 @@ import (
 )
 
 const (
-	queryInsertUser       = "INSERT INTO users(first_name, last_name, email, date_created) VALUES(?,?,?,?);"
+	queryInsertUser       = "INSERT INTO users(first_name, last_name, email, date_created, status) VALUES(?,?,?,?,?);"
 	queryDeleteUser       = "DELETE FROM users WHERE id =?;"
 	queryFindUserByStatus = "SELECT id, first_name, last_name, email, date_created, status FROM USERS where status = ?;"
 )
@@ -27,7 +27,7 @@ func (user *User) Save() *errors.RestErr {
 	timeNow := utils.FormatDate()
 	user.DateCreated = timeNow
 
-	insertResult, err := insertStmt.Exec(user.FirstName, user.LastName, user.Email, user.DateCreated)
+	insertResult, err := insertStmt.Exec(user.FirstName, user.LastName, user.Email, user.DateCreated, user.Status)
 	if err != nil {
 		return errors.NewInternalServerError("Could not insert the record")
 	}
