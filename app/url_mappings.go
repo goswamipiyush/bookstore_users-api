@@ -14,7 +14,7 @@ func mapUrls() {
 	router.GET("/user/:name", hello.Hello)
 
 	router.GET("/users/:userid", users.GetUser)
-
 	router.POST("/users", users.CreateUser)
+	router.DELETE("/users/:userid", users.DeleteUser)
 
 }

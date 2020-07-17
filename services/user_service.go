@@ -4,6 +4,8 @@
 package services
 
 import (
+	"database/sql"
+
 	"github.com/goswamipiyush/bookstore_users-api/domain/users"
 	"github.com/goswamipiyush/bookstore_users-api/utils/errors"
 )
@@ -28,5 +30,14 @@ func GetUser(id int64, user users.User) (*users.User, *errors.RestErr) {
 		return nil, err
 	}
 	//Seems we have got a 'good' user back, return it
+	return result, nil
+}
+
+func DeleteUser(id int64, user users.User) (*sql.Result, *errors.RestErr) {
+	result, err := user.Delete(id)
+	if err != nil {
+		return nil, err
+	}
+	//Seems like the user is deleted now
 	return result, nil
 }

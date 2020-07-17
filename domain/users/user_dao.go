@@ -2,6 +2,7 @@
 package users
 
 import (
+	"database/sql"
 	"fmt"
 	"strconv"
 
@@ -12,6 +13,7 @@ import (
 
 const (
 	queryInsertUser = "INSERT INTO users(first_name, last_name, email, date_created) VALUES(?,?,?,?);"
+	queryDeleteUser = "DELETE FROM users WHERE id =?;"
 )
 
 func (user *User) Save() *errors.RestErr {
@@ -55,5 +57,18 @@ func (user *User) Get(id int64) (*User, *errors.RestErr) {
 		return nil, errors.NewNotFoundError(fmt.Sprintf("User with id %d does not exist", id))
 	}
 	return user, nil
+}
 
+func (user *User) Delete(id int64) (*sql.Result, *errors.RestErr) {
+	deleteStmt, err := database.SqlDB.Prepare(queryDeleteUser)
+	if err != nil {
+		return nil, errors.NewInternalServerError("Could not prepare the query for deletion")
+	}
+	defer deleteStmt.Close()
+
+	deleteResult, err := deleteStmt.Exec(id)
+	if err != nil {
+		return nil, errors.NewInternalServerError("Could not delete the record")
+	}
+	return &deleteResult, nil
 }

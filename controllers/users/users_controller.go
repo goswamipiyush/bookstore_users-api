@@ -43,11 +43,7 @@ func CreateUser(c *gin.Context) {
 
 func GetUser(c *gin.Context) {
 	var user users.User
-
-	key := c.Params[0].Key
-	fmt.Println(key)
 	val := c.Params[0].Value
-	fmt.Println(val)
 
 	i, err := strconv.ParseInt(val, 10, 64)
 	if err != nil {
@@ -59,6 +55,24 @@ func GetUser(c *gin.Context) {
 		c.JSON(getErr.Status, getErr)
 		return
 	}
+	c.JSON(http.StatusOK, result)
+}
+
+func DeleteUser(c *gin.Context) {
+	var user users.User
+	val := c.Params[0].Value
+
+	i, err := strconv.ParseInt(val, 10, 64)
+	if err != nil {
+		//TODO - handle get error
+		return
+	}
+	result, deleteErr := services.DeleteUser(i, user)
+	if deleteErr != nil {
+		c.JSON(deleteErr.Status, deleteErr)
+		return
+	}
+	//str := `{"message:resource deleted successfully"}`
 	c.JSON(http.StatusOK, result)
 }
 
