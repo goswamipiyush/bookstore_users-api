@@ -41,14 +41,14 @@ func (user *User) Save() *errors.RestErr {
 
 func (user *User) Get(id int64) (*User, *errors.RestErr) {
 
-	queryGetUser := "SELECT id, first_name, last_name, email, date_created FROM users where id = ?"
+	queryGetUser := "SELECT id, first_name, last_name, email, date_created, status FROM users where id = ?"
 	stringId := strconv.FormatInt(id, 10)
 	rows, err := database.SqlDB.Query(queryGetUser, stringId)
 	if err != nil {
 		return nil, errors.NewInternalServerError("Could not fetch the record")
 	}
 	for rows.Next() {
-		err := rows.Scan(&user.Id, &user.FirstName, &user.LastName, &user.Email, &user.DateCreated)
+		err := rows.Scan(&user.Id, &user.FirstName, &user.LastName, &user.Email, &user.DateCreated, &user.Status)
 		if err != nil {
 			return nil, errors.NewInternalServerError("Could not fetch the record(s)")
 		}
