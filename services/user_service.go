@@ -51,3 +51,17 @@ func Search(status string) ([]users.User, *errors.RestErr) {
 	//Seems we have got a 'good' user back, return it
 	return users, nil
 }
+
+func UpdateUser(id int64, user users.User) (*users.User, *errors.RestErr) {
+	err := user.Validate()
+	if err != nil {
+		return nil, err
+	}
+
+	//We have a clean "savable" user at this point; so send to 'update database'
+	saveErr := user.Update(id)
+	if saveErr != nil {
+		return nil, saveErr
+	}
+	return &user, nil
+}

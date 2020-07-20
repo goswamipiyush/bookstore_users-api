@@ -12,9 +12,10 @@ import (
 )
 
 const (
-	queryInsertUser       = "INSERT INTO users(first_name, last_name, email, date_created, status) VALUES(?,?,?,?,?);"
+	queryInsertUser       = "INSERT INTO users(first_name, last_name, email, date_created, status, password) VALUES(?,?,?,?,?,?);"
 	queryDeleteUser       = "DELETE FROM users WHERE id =?;"
-	queryFindUserByStatus = "SELECT id, first_name, last_name, email, date_created, status FROM USERS where status = ?;"
+	queryFindUserByStatus = "SELECT id, first_name, last_name, email, date_created, status,password FROM USERS where status = ?;"
+	queryUpdateUser       = "UPDATE users set first_name = ?, last_name = ?, email = ?, date_created = ?, status = ?,password = ? where id =?;"
 )
 
 func (user *User) Save() *errors.RestErr {
@@ -27,7 +28,7 @@ func (user *User) Save() *errors.RestErr {
 	timeNow := utils.FormatDate()
 	user.DateCreated = timeNow
 
-	insertResult, err := insertStmt.Exec(user.FirstName, user.LastName, user.Email, user.DateCreated, user.Status)
+	insertResult, err := insertStmt.Exec(user.FirstName, user.LastName, user.Email, user.DateCreated, user.Status, user.Password)
 	if err != nil {
 		return errors.NewInternalServerError("Could not insert the record")
 	}
@@ -41,14 +42,14 @@ func (user *User) Save() *errors.RestErr {
 
 func (user *User) Get(id int64) (*User, *errors.RestErr) {
 
-	queryGetUser := "SELECT id, first_name, last_name, email, date_created, status FROM users where id = ?"
+	queryGetUser := "SELECT id, first_name, last_name, email, date_created, status, password FROM users where id = ?"
 	stringId := strconv.FormatInt(id, 10)
 	rows, err := database.SqlDB.Query(queryGetUser, stringId)
 	if err != nil {
 		return nil, errors.NewInternalServerError("Could not fetch the record")
 	}
 	for rows.Next() {
-		err := rows.Scan(&user.Id, &user.FirstName, &user.LastName, &user.Email, &user.DateCreated, &user.Status)
+		err := rows.Scan(&user.Id, &user.FirstName, &user.LastName, &user.Email, &user.DateCreated, &user.Status, &user.Password)
 		if err != nil {
 			return nil, errors.NewInternalServerError("Could not fetch the record(s)")
 		}
@@ -94,7 +95,7 @@ func (user *User) Search(status string) ([]User, *errors.RestErr) {
 	results := make([]User, 0)
 	for rows.Next() {
 		var user User
-		err := rows.Scan(&user.Id, &user.FirstName, &user.LastName, &user.Email, &user.DateCreated, &user.Status)
+		err := rows.Scan(&user.Id, &user.FirstName, &user.LastName, &user.Email, &user.DateCreated, &user.Status, &user.Password)
 		if err != nil {
 			return nil, errors.NewInternalServerError("Could not fetch the record(s)")
 		}
@@ -104,4 +105,27 @@ func (user *User) Search(status string) ([]User, *errors.RestErr) {
 		return nil, errors.NewNotFoundError(fmt.Sprintf("User with status '%s' does not exist", status))
 	}
 	return results, nil
+}
+
+func (user *User) Update(id int64) *errors.RestErr {
+
+	updateStmt, err := database.SqlDB.Prepare(queryUpdateUser)
+	if err != nil {
+		return errors.NewInternalServerError("Could not prepare the query for updation")
+	}
+	defer updateStmt.Close()
+	//Format the date before updating the record in the database
+	timeNow := utils.FormatDate()
+	user.DateCreated = timeNow
+
+	_, err = updateStmt.Exec(user.FirstName, user.LastName, user.Email, user.DateCreated, user.Status, user.Password, id)
+	if err != nil {
+		return errors.NewInternalServerError("Could not update the record")
+	}
+	// userId, err := insertResult.LastInsertId()
+	// if err != nil {
+	// 	return errors.NewInternalServerError("Error while trying to insert id")
+	// }
+	//user.Id = updateResult.Id
+	return nil
 }

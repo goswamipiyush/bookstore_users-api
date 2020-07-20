@@ -86,6 +86,27 @@ func Search(c *gin.Context) {
 	c.JSON(http.StatusOK, users)
 }
 
-func SearchUser(c *gin.Context) {
-	c.String(http.StatusNotImplemented, "Please implement me!")
+func UpdateUser(c *gin.Context) {
+	var user users.User
+	val := c.Params[0].Value
+
+	i, err := strconv.ParseInt(val, 10, 64)
+	if err != nil {
+		//TODO - handle get error
+		return
+	}
+
+	//Second way of populating JSON structure from request body
+	err1 := c.ShouldBindJSON(&user)
+	if err1 != nil {
+		restErr := errors.NewBadRequestError("Invalid JSON body")
+		c.JSON(restErr.Status, restErr)
+		return
+	}
+	result, saveErr := services.UpdateUser(i, user)
+	if saveErr != nil {
+		c.JSON(saveErr.Status, saveErr)
+		return
+	}
+	c.JSON(http.StatusOK, result)
 }
