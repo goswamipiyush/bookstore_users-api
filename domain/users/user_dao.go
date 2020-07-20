@@ -122,10 +122,5 @@ func (user *User) Update(id int64) *errors.RestErr {
 	if err != nil {
 		return errors.NewInternalServerError("Could not update the record")
 	}
-	// userId, err := insertResult.LastInsertId()
-	// if err != nil {
-	// 	return errors.NewInternalServerError("Error while trying to insert id")
-	// }
-	//user.Id = updateResult.Id
 	return nil
 }
