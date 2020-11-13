@@ -1,5 +1,5 @@
 //PAG :~~ This is the main package (entry point) for the bookstore application. This will have the main function..
-//Piyush Goswami is the author
+//Piyush A. Goswami is the author
 
 package main
 
